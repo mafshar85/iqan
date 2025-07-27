@@ -21,6 +21,19 @@ This project automates the setup of a **Hysteria v2 Proxy** using **Ansible**, *
 
 Before running the playbooks, edit the following files to match your environment:
 
+###  0: `inventory/hosts.yml`
+
+Replace YOUR_SERVER_IP with the actual IP address of the server where you want to install the Hysteria proxy
+
+```yml
+all:
+  hosts:
+    hysteria_proxy:
+      ansible_host: YOUR_SERVER_IP
+```
+
+---
+
 ### 1. `inventory/group_vars/all/general.yml`
 
 Set your domain and optional parameters:
