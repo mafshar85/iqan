@@ -105,7 +105,7 @@ See usage instructions in `Hint.txt`.
 Once deployed, the Hysteria client can be started with:
 
 ```bash
-hysteria client -c ~/hysteria/client.yaml
+hysteria client -c ~/hysteria/client.yml
 ```
 
 To set up proxying in your terminal:
