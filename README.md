@@ -63,8 +63,8 @@ Set your Cloudflare API credentials:
 
 ```yaml
 # These reference values in your vault
-API_TOKEN_VAULT: REPLACE_WITH_YOUR_CLOUDFLARE_API_TOKEN"
-ZONE_ID_VAULT: REPLACE_WITH_YOUR_CLOUDFLARE_ZONE_ID"
+API_TOKEN_VAULT: REPLACE_WITH_YOUR_CLOUDFLARE_API_TOKEN
+ZONE_ID_VAULT: REPLACE_WITH_YOUR_CLOUDFLARE_ZONE_ID
 ```
 
 ---
@@ -111,10 +111,10 @@ hysteria client -c ~/hysteria/client.yaml
 To set up proxying in your terminal:
 
 ```bash
-export http_proxy=http://127.0.0.1:1080
-export https_proxy=http://127.0.0.1:1080
+export http_proxy=http://127.0.0.1:{{ hysteria_port }} 
+export https_proxy=http://127.0.0.1:{{ hysteria_port }} 
 ```
-
+> 💡 **Note:** Replace {{ hysteria_port }} with the actual port you configured for Hysteria (e.g.1099)
 
 ---
 
