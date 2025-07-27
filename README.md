@@ -57,14 +57,14 @@ hysteria_password_vault: "your_secure_password"
 
 ---
 
-### 3. `roles/hysteria_proxy/defaults/main/main.yml`
+### 3. `roles/hysteria_proxy/defaults/main/vault.yml`
 
 Set your Cloudflare API credentials:
 
 ```yaml
 # These reference values in your vault
-API_TOKEN: "{{ API_TOKEN_VAULT }}"
-ZONE_ID: "{{ ZONE_ID_VAULT }}"
+API_TOKEN_VAULT: REPLACE_WITH_YOUR_CLOUDFLARE_API_TOKEN"
+ZONE_ID_VAULT: REPLACE_WITH_YOUR_CLOUDFLARE_ZONE_ID"
 ```
 
 ---
@@ -92,6 +92,8 @@ ansible-playbook -i inventory/hosts.yml playbooks/hysteria_proxy.yml
 ```bash
 ansible-playbook -i inventory/hosts.yml playbooks/hysteria_client.yml --ask-become-pass
 ```
+
+> 💡 **Note:** You will be prompted for your **local machine's password** (not the remote server). 
 
 The config will be created in `~/hysteria`.
 See usage instructions in `Hint.txt`.
