@@ -1,0 +1,28 @@
+---
+- name: Creates directory
+  ansible.builtin.file:
+    path: "{{ service_dir }}"
+    state: directory
+  tags:
+    - compose
+
+- name: Copy hysteria config in "{{ service_dir }}"
+  ansible.builtin.template:
+    src: config.yml.j2
+    dest: "{{ service_dir }}/config.yaml"
+  tags:
+    - compose
+
+- name: Copy compose.yml file with owner and permissions
+  ansible.builtin.template:
+    src: compose.yml.j2
+    dest: "{{ service_dir }}/compose.yml"
+  tags:
+    - compose
+
+
+- name: deploy Docker Compose stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ service_dir }}"
+  tags:
+    - deploy

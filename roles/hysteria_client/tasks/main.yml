@@ -1,0 +1,5 @@
+---
+- name:  Created Hysteria client config for use
+  import_tasks: client.yml
+  tags:
+    - client

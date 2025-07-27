@@ -1,0 +1,7 @@
+---
+- name: setup and confuguration Hysteria client
+  hosts: localhost
+  become: true
+  gather_facts: false
+  roles:
+    - { role: roles/hysteria_client, become: true, tags: hysteria_client }

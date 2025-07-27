@@ -1,0 +1,12 @@
+server: {{ proxy_domain }}:{{ 443 if redirect_443_to_port else hysteria_port }}
+auth: {{ hysteria_password}}
+
+tls:
+  sni: {{ proxy_domain}}
+  insecure: false
+
+socks5:
+  listen: 127.0.0.1:{{ socks_port_client }}
+
+http:
+  listen: 127.0.0.1:{{ http_port_client }}

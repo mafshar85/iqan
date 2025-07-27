@@ -1,0 +1,23 @@
+---
+- name: Redirect external UDP 443 to {{ hysteria_port }} (PREROUTING)
+  ansible.builtin.shell: >
+        iptables -t nat -A PREROUTING -p udp --dport 443 -j REDIRECT --to-ports {{ hysteria_port }}
+  when: redirect_443_to_port == true
+  tags: iptables
+
+- name: Redirect local UDP 443 to {{ hysteria_port }} (OUTPUT)
+  ansible.builtin.shell: >
+        iptables -t nat -A OUTPUT -p udp -d 127.0.0.1 --dport 443 -j REDIRECT --to-ports {{ hysteria_port }}
+  when: redirect_443_to_port == true
+  tags: iptables
+
+
+- name: Install iptables-persistent
+  ansible.builtin.apt:
+    name: iptables-persistent
+    state: present
+  tags: iptables
+
+- name: Save current iptables rules (IPv4)
+  ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
+  tags: iptables

@@ -1,0 +1,76 @@
+---
+- name: Download hysteria binary on control machine
+  ansible.builtin.get_url:
+    url: "https://github.com/apernet/hysteria/releases/download/app%2F{{ VERSION }}/hysteria-{{ ARCH }}"
+    dest: "/tmp/hysteria-{{ ARCH }}"
+    mode: '0755'
+  delegate_to: localhost
+  become: false
+  tags:
+    - client
+
+- name: Move hysteria binary to /usr/local/bin on control machine
+  ansible.builtin.command: cp /tmp/hysteria-{{ ARCH }} /usr/local/bin/hysteria
+  delegate_to: localhost
+  become: true
+  tags:
+    - client
+
+- name: Ensure hysteria folder exists locally
+  ansible.builtin.file:
+    path: "{{ lookup('env', 'HOME') }}/hysteria"
+    state: directory
+    mode: '0755'
+  delegate_to: localhost
+  run_once: true
+  tags:
+    - client
+
+- name: Render client.yml from template locally
+  ansible.builtin.template:
+    src: client.yml.j2
+    dest: "{{ lookup('env', 'HOME') }}/hysteria/client.yml"
+    mode: '0644'
+  delegate_to: localhost
+  run_once: true
+  tags:
+    - client
+
+
+- name: Render clash-meta-client.yml from template locally
+  ansible.builtin.template:
+    src: clashmeta_client.yml.j2
+    dest: "{{ lookup('env', 'HOME') }}/hysteria/clashmeta_client.yml"
+    mode: '0644'
+  delegate_to: localhost
+  run_once: true
+  tags:
+    - client
+
+
+- name: Copy Hysteria client setup message to /tmp/message.txt
+  ansible.builtin.copy:
+    src: Hint.txt
+    dest: "{{ lookup('env', 'HOME') }}/Hint.txt"
+  delegate_to: localhost
+  run_once: true
+  tags:
+    - client
+
+- name: Display contents of message.txt with real newlines
+  slurp:
+    src: "{{ lookup('env', 'HOME') }}/Hint.txt"
+  delegate_to: localhost
+  run_once: true
+  register: file_content
+  tags:
+    - client
+
+- name: Show file content
+  debug:
+    msg: "{{ file_content.content | b64decode }}"
+  tags:
+    - client
+
+
+

@@ -1,0 +1,15 @@
+---
+version: "3.9"
+
+services:
+  hysteria:
+    image: tobyxdd/hysteria:{{ image_tag }}
+    container_name: {{ container_name }}
+    restart: always
+    network_mode: "host"
+    volumes:
+      - {{ service_dir }}/config.yaml:/etc/hysteria.yaml:ro
+      - /etc/letsencrypt/live/{{ proxy_domain }}/fullchain.pem:/etc/hysteria/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/{{ proxy_domain }}/privkey.pem:/etc/hysteria/certs/privkey.pem:ro
+    command: ["server", "-c", "/etc/hysteria.yaml"]
+

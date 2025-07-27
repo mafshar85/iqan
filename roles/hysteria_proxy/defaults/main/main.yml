@@ -1,0 +1,24 @@
+---
+#Init variables are defined in the inventory/group_vars/all/ directory.[project_dir,main_domain]
+service_name: hysteria
+service_dir: "{{ project_dir }}/hysteria"
+image_tag: "{{ image_tag }}"
+container_name: hysteria
+
+
+#Hysteria_configuratin file's parameters
+proxy_domain: "{{ proxy_domain }}"
+hysteria_port: "{{ hysteria_port }}"
+hysteria_password: "{{ hysteria_password_vault }}"
+bandwidth_up: 50
+bandwidth_down: 200
+
+#cloudflare configuration for dns setup
+#Get API_TOKEN and ZONE_ID from your Cloudflare dashboard under API Tokens and DNS settings of your domain respectively
+API_TOKEN: "{{ API_TOKEN_VAULT }}"
+ZONE_ID: "{{ZONE_ID_VAULT}}"
+
+redirect_443_to_port: "{{ redirect_443_to_port }}"
+
+
+

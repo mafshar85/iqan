@@ -1,0 +1,64 @@
+#!/bin/bash
+
+API_TOKEN="{{ API_TOKEN }}"
+ZONE_ID="{{ ZONE_ID }}"
+DNS_NAMES=("{{ proxy_domain }}" "{{ main_domain }}")
+
+# Get the server's current public IP
+NEWSERVER_IP=$(hostname -I | awk '{print $1}')
+
+# Cloudflare API URL
+CF_API="https://api.cloudflare.com/client/v4"
+
+# Function to create or update a DNS record
+update_or_create_record() {
+  local DNS_NAME=$1
+
+  # Get the DNS record ID (if exists)
+  RECORD_INFO=$(curl -s -X GET "$CF_API/zones/$ZONE_ID/dns_records?type=A&name=$DNS_NAME" \
+    -H "Authorization: Bearer $API_TOKEN" \
+    -H "Content-Type: application/json")
+
+  RECORD_ID=$(echo "$RECORD_INFO" | jq -r '.result[0].id')
+
+  if [[ "$RECORD_ID" != "null" && -n "$RECORD_ID" ]]; then
+    echo "🔄 Updating existing record: $DNS_NAME ($RECORD_ID)"
+
+    RESPONSE=$(curl -s -X PUT "$CF_API/zones/$ZONE_ID/dns_records/$RECORD_ID" \
+      -H "Authorization: Bearer $API_TOKEN" \
+      -H "Content-Type: application/json" \
+      --data '{
+        "type": "A",
+        "name": "'"$DNS_NAME"'",
+        "content": "'"$NEWSERVER_IP"'",
+        "ttl": 120,
+        "proxied": false
+      }')
+  else
+    echo "➕ Creating new record for: $DNS_NAME"
+
+    RESPONSE=$(curl -s -X POST "$CF_API/zones/$ZONE_ID/dns_records" \
+      -H "Authorization: Bearer $API_TOKEN" \
+      -H "Content-Type: application/json" \
+      --data '{
+        "type": "A",
+        "name": "'"$DNS_NAME"'",
+        "content": "'"$NEWSERVER_IP"'",
+        "ttl": 120,
+        "proxied": false
+      }')
+  fi
+
+  # Check result
+  if echo "$RESPONSE" | grep -q '"success":true'; then
+    echo "✅ Record for $DNS_NAME set to $NEWSERVER_IP"
+  else
+    echo "❌ Failed to set record for $DNS_NAME"
+    echo "$RESPONSE"
+  fi
+}
+
+# Loop through all DNS names and apply changes
+for NAME in "${DNS_NAMES[@]}"; do
+  update_or_create_record "$NAME"
+done

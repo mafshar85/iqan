@@ -1,0 +1,21 @@
+#!/bin/bash
+
+RECORD_NAME="_acme-challenge.{{ proxy_domain}}"
+RECORD_CONTENT="${CERTBOT_VALIDATION}"
+TTL=60
+
+curl -s -X POST "https://api.cloudflare.com/client/v4/zones/{{ ZONE_ID }}/dns_records" \
+  -H "Authorization: Bearer {{ API_TOKEN }}" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "type": "TXT",
+    "name": "'"${RECORD_NAME}"'",
+    "content": "'"${RECORD_CONTENT}"'",
+    "ttl": '"${TTL}"',
+    "proxied": false
+  }'
+
+# Wait for DNS to propagate
+sleep 30
+
+

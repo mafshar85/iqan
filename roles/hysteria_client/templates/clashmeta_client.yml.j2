@@ -1,0 +1,29 @@
+# HTTP proxy port (local). Apps like browsers or Clash clients connect here
+port: 7890
+# SOCKS5 proxy port (local). Useful for tools like Telegram or system proxy
+socks-port: 7891
+# Allows other devices on your local network to access Clash through your IP. Useful for sharing proxy
+allow-lan: true
+# Enables rule-based proxying (as opposed to global or direct-only mode). Uses rules: section
+mode: rule
+log-level: info
+
+proxies:
+  - name: hysteria2-proxy
+    type: hysteria2
+    server: {{ proxy_domain}}
+    port: {{ 443 if redirect_443_to_port else hysteria_port }}
+    password: {{ hysteria_password}}
+    sni: {{ proxy_domain}}
+    alpn:
+      - h3
+    skip-cert-verify: false
+
+proxy-groups:
+  - name: Proxy
+    type: select
+    proxies:
+      - hysteria2-proxy
+
+rules:
+  - MATCH,Proxy

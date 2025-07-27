@@ -1,0 +1,26 @@
+---
+- name: Cloudflare configuration for dns setup
+  import_tasks: cloudflare.yml
+  tags:
+    - cloudflare
+    - hysteria
+
+- name: Get Certificate for Hysteria Domain
+  import_tasks: getcertificate.yml
+  tags:
+    - ssl 
+    - hysteria
+
+- name: Hysteria proxy setup
+  import_tasks: hysteria.yml
+  tags:
+    - hysteria
+    - hx
+
+- name: Iptables setup
+  import_tasks: iptables.yml
+  when: redirect_443_to_port | default(false)
+  tags:
+    - hysteria
+
+

@@ -1,0 +1,6 @@
+#Parameters for Hysteria configuration file
+hysteria_password_vault: "{{ hysteria_password_vault}}"
+
+#Parameters for the Cloudflare template file
+API_TOKEN_VAULT: REPLACE_WITH_YOUR_CLOUDFLARE_API_TOKEN
+ZONE_ID_VAULT: REPLACE_WITH_YOUR_CLOUDFLARE_ZONE_ID % 

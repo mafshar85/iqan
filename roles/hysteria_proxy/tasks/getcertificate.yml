@@ -1,0 +1,33 @@
+---
+- name: Install Certbot (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name: certbot
+    state: present
+    update_cache: yes
+  tags:
+    - ssl 
+
+- name: Copy dns_challenge.sh file with owner and permissions
+  ansible.builtin.template:
+    src: dns_challenge.sh.j2
+    dest: "{{ service_dir }}/dns_challenge.sh"
+    mode: '0755'
+  tags:
+    - dns_challenge
+    - ssl
+
+
+- name: Request SSL certificate via DNS-01 challenge
+  shell: |
+    certbot certonly --manual \
+      --manual-auth-hook "{{ service_dir }}/dns_challenge.sh" \
+      --manual-cleanup-hook "{{ service_dir }}/dns_challenge.sh" \
+      --preferred-challenges dns \
+      --agree-tos \
+      --register-unsafely-without-email \
+      -d "{{ proxy_domain }}" \
+      --non-interactive \
+      --manual-public-ip-logging-ok
+  environment:
+    CERTBOT_DOMAIN: "{{ proxy_domain }}"
+  tags: [dns_challenge,ssl]

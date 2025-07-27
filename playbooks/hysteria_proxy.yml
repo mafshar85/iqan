@@ -1,0 +1,7 @@
+---
+- name: setup and confuguration Hysteria proxy
+  hosts: hysteria_proxy
+  become: true
+  gather_facts: false
+  roles:
+    - { role: roles/hysteria_proxy, become: true, tags: hysteria_proxy }

@@ -1,0 +1,13 @@
+
+👉 To start the proxy, run:
+   hysteria client -c ~/hysteria/client.yaml
+
+🛰️ To view your connection share link, run:
+   hysteria share -c ~/hysteria/client.yaml
+
+📌 Tip: Keep your config secure and test the proxy with:
+   curl --socks5 127.0.0.1:1080 https://example.com
+
+📌 Tip: To set HTTP proxy in your terminal session:
+   export http_proxy=http://127.0.0.1:1099 #hysteria_port
+   export https_proxy=http://127.0.0.1:1099 #hysteria_port

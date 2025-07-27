@@ -1,0 +1,69 @@
+---
+- name: Ensure service directory exists
+  ansible.builtin.file:
+    path: "{{ service_dir }}"
+    state: directory
+  tags:
+    - cloudflare
+
+- name: Copy file with owner and permissions
+  ansible.builtin.template:
+    src: cludflare_dns.sh.j2
+    dest: "{{ service_dir }}/cloudflare_dns.sh"
+    mode: '0755'
+  tags:
+    - cloudflare
+
+- name: Install jq with apt update
+  ansible.builtin.apt:
+    name: jq
+    state: present
+    update_cache: yes
+  tags:
+    - cloudflare
+
+
+- name: Run Cloudflare.sh on Remote Server
+  ansible.builtin.shell: "{{ service_dir }}/cloudflare_dns.sh"
+  args:
+    chdir: "{{ service_dir }}"
+  register: script_output
+  tags:
+    - cloudflare
+
+- name: Display the script output
+  debug:
+    var: script_output.stdout
+  tags: [cloudflare] 
+
+
+
+- name: Wait for 30 seconds
+  wait_for:
+    timeout: 30
+
+
+
+- name: Get server's main IP using hostname -I
+  ansible.builtin.command: hostname -I
+  register: hostname_ip_result
+  changed_when: false
+
+- name: Set main IP (first from hostname -I)
+  ansible.builtin.set_fact:
+    server_ip: "{{ hostname_ip_result.stdout.split()[0] }}"
+
+- name: Wait until domain IP matches server IP
+  ansible.builtin.command: dig +short {{ proxy_domain }}
+  register: domain_ip_result
+  changed_when: false
+  retries: 5
+  delay: 15
+  until: server_ip in domain_ip_result.stdout_lines
+
+- name: Fail if domain IP still does not match after retries
+  ansible.builtin.fail:
+    msg: >
+      The domain {{ proxy_domain }} does not point to this server ({{ server_ip }}).
+      It resolves to: {{ domain_ip_result.stdout_lines }}
+  when: server_ip not in domain_ip_result.stdout_lines

@@ -1,0 +1,14 @@
+---
+
+#Hysteria_configuratin file's parameters
+proxy_domain: "{{ proxy_domain }}"
+hysteria_port: "{{ hysteria_port }}"
+hysteria_password: "{{ hysteria_password_vault }}"
+
+redirect_443_to_port: "{{ redirect_443_to_port }}"
+
+#client configuration
+socks_port_client: 1080
+http_port_client: 1099 
+VERSION: "{{ image_tag }}"
+ARCH: linux-amd64
